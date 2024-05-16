@@ -3,6 +3,8 @@
  */
 package classroomgenerator;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,122 +36,171 @@ public class App {
     }
 
     public static void displayTablePlan(final Classroom classroom) {
-        System.out.println("Plan de table classe:\n");        
+        
+        try (FileWriter writer = new FileWriter("plan_de_classe.txt")) {
+        
+            writer.write("Plan de table classe:\n\n");
+            System.out.println("Plan de classe:\n");        
 
-        String previousTableGroup = "";
-        for (TableRow tableRow : classroom.tableRowList.stream().sorted((o1, o2) -> o1.displayOrder < o2.displayOrder ? -1 : 1).collect(Collectors.toList())) {
-            
-            if (!tableRow.id.equals(previousTableGroup)){
-                System.out.println();
-                System.out.println();
-                System.out.println();
-                previousTableGroup = tableRow.id;
-                System.out.println("[ " + tableRow.id + " ] ");
-                System.out.println();
-            }
-            
-            for (Table table : tableRow.tableList.stream().sorted((o1, o2) -> Integer.parseInt(o1.id) < Integer.parseInt(o2.id) ? -1 : 1).collect(Collectors.toList())) {
-                switch (Integer.parseInt(table.id)) {                    
-                    case 31:
-                        // 31                
-                        printTable(table);
-                        System.out.print("\t\t");
+            String previousTableGroup = "";
+            for (TableRow tableRow : classroom.tableRowList.stream().sorted((o1, o2) -> o1.displayOrder < o2.displayOrder ? -1 : 1).collect(Collectors.toList())) {
+                
+                if (!tableRow.id.equals(previousTableGroup)){
+                    previousTableGroup = tableRow.id;
+                    writer.write("\n\n\n");
+                    writer.write("[ " + tableRow.id + " ] \n\n");
+                    System.out.print("\n\n\n");
+                    System.out.println("[ " + tableRow.id + " ] \n\n");
+                }
+                
+                for (Table table : tableRow.tableList.stream().sorted((o1, o2) -> Integer.parseInt(o1.id) < Integer.parseInt(o2.id) ? -1 : 1).collect(Collectors.toList())) {
+                    switch (Integer.parseInt(table.id)) {                    
+                        case 31:
+                            // 31                
+                            printTableToFile(table, writer);
+                            writer.write("\t\t\t\t");
+                            printTable(table);
+                            System.out.print("\t\t");
 
-                        final List<Table> talbe_44_45_46 = classroom.tableRowList.stream().filter(tr -> tr.tableList.stream().anyMatch(t -> t.getId().equals("44"))).findFirst().get().tableList;
-                        // 44 45 46
-                        talbe_44_45_46.stream().filter(t -> "44".equals(t.getId()) || "45".equals(t.getId()) || "46".equals(t.getId()))
-                        .forEach(talbe_4x1 -> {
-                            printTable(talbe_4x1);
-                            if ("44".equals(talbe_4x1.getId()) || "45".equals(talbe_4x1.getId())) {
-                                System.out.print("\t");
-                            }
-                        });
-                        System.out.print("\t\t");
+                            final List<Table> talbe_44_45_46 = classroom.tableRowList.stream().filter(tr -> tr.tableList.stream().anyMatch(t -> t.getId().equals("44"))).findFirst().get().tableList;
+                            // 44 45 46
+                            talbe_44_45_46.stream()
+                                .filter(t -> "44".equals(t.getId()) || "45".equals(t.getId()) || "46".equals(t.getId()))
+                                .forEach(talbe_4x1 -> {
+                                    try {
+                                        printTableToFile(talbe_4x1, writer);
+                                        printTable(talbe_4x1);
+                                        if ("44".equals(talbe_4x1.getId()) || "45".equals(talbe_4x1.getId())) {
+                                            try {
+                                                writer.write("\t\t\t");
+                                            } catch (IOException e) {
+                                                e.printStackTrace();
+                                            }
+                                            System.out.print("\t");
+                                        }
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                            });
+                            writer.write("\t\t\t");
+                            System.out.print("\t\t");
 
-                        // 52           
-                        final Table talbe52 = classroom.tableRowList.stream().filter(tr -> tr.tableList.stream().anyMatch(t -> t.getId().equals("52"))).findFirst().get().tableList.stream().filter(t -> t.getId().equals("52")).findFirst().get();
-                        printTable(talbe52);
-                        System.out.print("\n");
-                        break;
-                    case 32:
-                        // 32
-                        printTable(table);
-                        System.out.print("\t\t");
+                            // 52           
+                            final Table talbe52 = classroom.tableRowList.stream().filter(tr -> tr.tableList.stream().anyMatch(t -> t.getId().equals("52"))).findFirst().get().tableList.stream().filter(t -> t.getId().equals("52")).findFirst().get();
+                            printTableToFile(talbe52, writer);
+                            writer.write("\n");
+                            printTable(talbe52);                            
+                            System.out.print("\n");
+                            break;
+                        case 32:
+                            // 32
+                            printTableToFile(table, writer);
+                            writer.write("\t\t\t\t");
+                            printTable(table);
+                            System.out.print("\t\t");
 
-                        final List<Table> talbe_4X = classroom.tableRowList.stream().filter(tr -> tr.tableList.stream().anyMatch(t -> t.getId().equals("44"))).findFirst().get().tableList;
-                        // 43       47
-                        talbe_4X.stream().filter(t -> "43".equals(t.getId()) || "47".equals(t.getId()))
-                        .forEach(talbe_4x2 -> {
-                            printTable(talbe_4x2);
-                            if ("43".equals(talbe_4x2.getId())) {
-                                System.out.print("\t\t\t\t");
-                            }
-                        });
+                            final List<Table> talbe_4X = classroom.tableRowList.stream().filter(tr -> tr.tableList.stream().anyMatch(t -> t.getId().equals("44"))).findFirst().get().tableList;
+                            // 43       47
+                            talbe_4X.stream()
+                                .filter(t -> "43".equals(t.getId()) || "47".equals(t.getId()))
+                                .forEach(talbe_4x2 -> {
+                                    try {
+                                        printTableToFile(talbe_4x2, writer);
+                                        printTable(talbe_4x2);
+                                        if ("43".equals(talbe_4x2.getId())) {                                        
+                                            writer.write("\t\t\t\t\t\t\t\t");
+                                            System.out.print("\t\t\t\t");
+                                        }
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                            });
 
-                        // 51
-                        final Table talbe51 = classroom.tableRowList.stream().filter(tr -> tr.tableList.stream().anyMatch(t -> t.getId().equals("51"))).findFirst().get().tableList.stream().filter(t -> t.getId().equals("51")).findFirst().get();
-                        System.out.print("\t\t");
-                        printTable(talbe51);
-                        System.out.print("\n");
-                        break;
-                    case 33:
-                        // 33
-                        printTable(table);
-                        System.out.print("\t\t");
+                            // 51
+                            final Table talbe51 = classroom.tableRowList.stream().filter(tr -> tr.tableList.stream().anyMatch(t -> t.getId().equals("51"))).findFirst().get().tableList.stream().filter(t -> t.getId().equals("51")).findFirst().get();
+                            writer.write("\t\t\t");
+                            printTableToFile(talbe51, writer);
+                            writer.write("\n");
+                            System.out.print("\t\t");
+                            printTable(talbe51);
+                            System.out.print("\n");
+                            break;
+                        case 33:
+                            // 33
+                            printTableToFile(table, writer);
+                            writer.write("\t\t\t\t");
+                            printTable(table);
+                            System.out.print("\t\t");
 
-                        final List<Table> talbe_4XX = classroom.tableRowList.stream().filter(tr -> tr.tableList.stream().anyMatch(t -> t.getId().equals("44"))).findFirst().get().tableList;
-                        // 42       48
-                        talbe_4XX.stream().filter(t -> "42".equals(t.getId()) || "48".equals(t.getId()))
-                        .forEach(talbe_4x3 -> {
-                            printTable(talbe_4x3);
+                            final List<Table> talbe_4XX = classroom.tableRowList.stream().filter(tr -> tr.tableList.stream().anyMatch(t -> t.getId().equals("44"))).findFirst().get().tableList;
+                            // 42       48
+                            talbe_4XX.stream().filter(t -> "42".equals(t.getId()) || "48".equals(t.getId()))
+                            .forEach(talbe_4x3 -> {
+                                try {
+                                    printTableToFile(talbe_4x3, writer);
+                                    writer.write("\t\t\t\t\t\t\t\t\t");
+                                    printTable(talbe_4x3);
+                                    System.out.print("\t\t\t\t");
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            });
+
+                            writer.write("\n");
+                            System.out.print("\n");
+                            break;
+                        case 51:
+                        case 52:
+                            // nothing to do, already display in 31, 32, 33
+                            break;
+                        case 41:
+                            // 41
+                            writer.write("\t\t\t\t\t\t");
+                            printTableToFile(table, writer);
+                            writer.write("\t\t\t\t\t\t\t\t\t\t");
+                            System.out.print("\t\t");
+                            printTable(table);
                             System.out.print("\t\t\t\t");
-                        });
 
-                        System.out.print("\n");
-                        break;
-                    case 51:
-                    case 52:
-                        // nothing to do, already display in 31, 32, 33
-                        break;
-                    case 41:
-                        // 41
-                        System.out.print("\t\t");
-                        printTable(table);
-                        System.out.print("\t\t");
+                            final Table talbe_49 = classroom.tableRowList.stream().filter(tr -> tr.tableList.stream().anyMatch(t -> t.getId().equals("44"))).findFirst().get().tableList.stream().filter(t -> "49".equals(t.getId())).findFirst().get();
+                            // 49
+                            printTableToFile(talbe_49, writer);
+                            printTable(talbe_49);
+                            break;
+                        case 42:
+                        case 43:
+                            // nothing to do, already display in 31, 32, 33
+                            break;
+                        case 44:
+                        case 45:
+                        case 46:
+                            // nothing to do, already display in 31, 32, 33
+                            break;
+                        case 47:
+                        case 48:
+                            // nothing to do, already display in 31, 32, 33
+                            break;
+                        case 49:
+                            // nothing to do, already display in 41
+                            break;
+                        default:
+                            printTableToFile(table, writer);
+                            printTable(table);
+                    }                
+                }
 
-                        final Table talbe_49 = classroom.tableRowList.stream().filter(tr -> tr.tableList.stream().anyMatch(t -> t.getId().equals("44"))).findFirst().get().tableList.stream().filter(t -> "49".equals(t.getId())).findFirst().get();
-                        // 49
-                        System.out.print("\t\t");
-                        printTable(talbe_49);
-                        System.out.print("\t\t");
-                        break;
-                    case 42:
-                    case 43:
-                        // nothing to do, already display in 31, 32, 33
-                        break;
-                    case 44:
-                    case 45:
-                    case 46:
-                        // nothing to do, already display in 31, 32, 33
-                        break;
-                    case 47:
-                    case 48:
-                        // nothing to do, already display in 31, 32, 33
-                        break;
-                    case 49:
-                        // nothing to do, already display in 41
-                        break;
-                    default:
-                        printTable(table);
-                }                
+                writer.write("\t\t");
+                System.out.print("\t\t");
             }
 
-            System.out.print("\t\t");
+            // Teacher's desk
+            writer.write("\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t");
+            writer.write("[                  Bureau                  ]");
+            writer.write("\n");
+            System.out.println("\n\u001B[33m\t\t\t\t\t\t\t\t[                  Bureau                  ]\n\u001B[0m");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        // Teacher's desk
-        System.out.println();
-        System.out.println("\u001B[33m\t\t\t\t\t\t\t\t[                  Bureau                  ]\n\u001B[0m");
     }
 
     public static void printTable(Table table) {
@@ -158,6 +209,15 @@ public class App {
             System.out.print("\u001B[31m[ " + tableFormatedString + " ]\u001B[0m ");
         } else {
             System.out.print("[ " + tableFormatedString + " ] ");
+        }
+    }
+
+    public static void printTableToFile(Table table, FileWriter writer) throws IOException {
+        final String tableFormatedString = String.format("%-10s", table);
+        if (table.canHoldAgited) {
+            writer.write("[ " + tableFormatedString + " ] ");
+        } else {
+            writer.write("[ " + tableFormatedString + " ] ");
         }
     }
 
