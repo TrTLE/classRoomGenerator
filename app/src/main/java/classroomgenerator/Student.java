@@ -23,11 +23,6 @@ public class Student {
 
     @Override
     public String toString() {
-        return "Student{" +
-                " lastName='" + lastName + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", isAgited=" + isAgited +
-                ", isWeak=" + isWeak +
-                " }";
+        return lastName + " " + firstName;
     }
 }

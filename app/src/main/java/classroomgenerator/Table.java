@@ -74,6 +74,6 @@ public class Table {
 
     @Override
     public String toString() {
-        return "" + student;
+        return (student == null) ? "Table libre" : "" + student;
     }
 }

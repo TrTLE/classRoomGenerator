@@ -30,14 +30,11 @@ public class App {
             System.out.println();
         });
 
-        // System.out.println("__ generated classroom __");
-        // System.out.println(classroom);
-
         displayTablePlan(classroom);
     }
 
     public static void displayTablePlan(final Classroom classroom) {
-        System.out.println("Classroom Table Plan:\n");        
+        System.out.println("Plan de table classe:\n");        
 
         String previousTableGroup = "";
         for (TableRow tableRow : classroom.tableRowList.stream().sorted((o1, o2) -> o1.displayOrder < o2.displayOrder ? -1 : 1).collect(Collectors.toList())) {
@@ -45,8 +42,10 @@ public class App {
             if (!tableRow.id.equals(previousTableGroup)){
                 System.out.println();
                 System.out.println();
+                System.out.println();
                 previousTableGroup = tableRow.id;
                 System.out.println("[ " + tableRow.id + " ] ");
+                System.out.println();
             }
             
             for (Table table : tableRow.tableList.stream().sorted((o1, o2) -> Integer.parseInt(o1.id) < Integer.parseInt(o2.id) ? -1 : 1).collect(Collectors.toList())) {
@@ -80,13 +79,16 @@ public class App {
                         final List<Table> talbe_4X = classroom.tableRowList.stream().filter(tr -> tr.tableList.stream().anyMatch(t -> t.getId().equals("44"))).findFirst().get().tableList;
                         // 43       47
                         talbe_4X.stream().filter(t -> "43".equals(t.getId()) || "47".equals(t.getId()))
-                        .forEach(talbe -> {
-                            printTable(talbe);
-                            System.out.print("\t\t");
+                        .forEach(talbe_4x2 -> {
+                            printTable(talbe_4x2);
+                            if ("43".equals(talbe_4x2.getId())) {
+                                System.out.print("\t\t\t\t");
+                            }
                         });
 
                         // 51
                         final Table talbe51 = classroom.tableRowList.stream().filter(tr -> tr.tableList.stream().anyMatch(t -> t.getId().equals("51"))).findFirst().get().tableList.stream().filter(t -> t.getId().equals("51")).findFirst().get();
+                        System.out.print("\t\t");
                         printTable(talbe51);
                         System.out.print("\n");
                         break;
@@ -98,9 +100,9 @@ public class App {
                         final List<Table> talbe_4XX = classroom.tableRowList.stream().filter(tr -> tr.tableList.stream().anyMatch(t -> t.getId().equals("44"))).findFirst().get().tableList;
                         // 42       48
                         talbe_4XX.stream().filter(t -> "42".equals(t.getId()) || "48".equals(t.getId()))
-                        .forEach(talbe -> {
-                            printTable(talbe);
-                            System.out.print("\t\t");
+                        .forEach(talbe_4x3 -> {
+                            printTable(talbe_4x3);
+                            System.out.print("\t\t\t\t");
                         });
 
                         System.out.print("\n");
@@ -111,7 +113,14 @@ public class App {
                         break;
                     case 41:
                         // 41
+                        System.out.print("\t\t");
                         printTable(table);
+                        System.out.print("\t\t");
+
+                        final Table talbe_49 = classroom.tableRowList.stream().filter(tr -> tr.tableList.stream().anyMatch(t -> t.getId().equals("44"))).findFirst().get().tableList.stream().filter(t -> "49".equals(t.getId())).findFirst().get();
+                        // 49
+                        System.out.print("\t\t");
+                        printTable(talbe_49);
                         System.out.print("\t\t");
                         break;
                     case 42:
@@ -128,9 +137,7 @@ public class App {
                         // nothing to do, already display in 31, 32, 33
                         break;
                     case 49:
-                        // 49
-                        printTable(table);
-                        System.out.print("\t\t");
+                        // nothing to do, already display in 41
                         break;
                     default:
                         printTable(table);
@@ -142,14 +149,15 @@ public class App {
 
         // Teacher's desk
         System.out.println();
-        System.out.println("\t\t\t\t[Teacher's Desk]\n");
+        System.out.println("\u001B[33m\t\t\t\t\t\t\t\t[                  Bureau                  ]\n\u001B[0m");
     }
 
     public static void printTable(Table table) {
+        final String tableFormatedString = String.format("%-10s", table);
         if (table.canHoldAgited) {
-            System.out.print("\u001B[31m[ " + table + " ]\u001B[0m ");
+            System.out.print("\u001B[31m[ " + tableFormatedString + " ]\u001B[0m ");
         } else {
-            System.out.print("[ " + table + " ] ");
+            System.out.print("[ " + tableFormatedString + " ] ");
         }
     }
 
@@ -172,8 +180,8 @@ public class App {
         
 
         // MILLIEU DE LA CLASSE
-        Table table51 = new Table("51", true);
-        Table table52 = new Table("52", false, false);
+        Table table51 = new Table("51", false, false);
+        Table table52 = new Table("52", true);
         TableRow tableRow5 = new TableRow("MILIEU DE LA CLASSE", List.of(table51, table52), displayOrder--);
         tableRows.add(tableRow5);
 
